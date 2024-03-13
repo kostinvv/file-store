@@ -1,5 +1,4 @@
 ﻿using FileStore.Server.DTOs.User;
-using FileStore.Server.Exceptions.User;
 using FileStore.Server.Services.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 
