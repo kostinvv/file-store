@@ -7,6 +7,6 @@ namespace FileStore.Server.Services.Interfaces
     {
         public Task<Result> CreateUserAsync(CreateUserRequest request);
 
-        public Task<UserLoginResponse> LoginUserAsync(UserLoginRequest request);
+        public Task<Result<UserLoginResponse>> LoginUserAsync(UserLoginRequest request);
     }
 }

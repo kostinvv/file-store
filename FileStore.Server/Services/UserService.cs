@@ -8,7 +8,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace FileStore.Server.Services
 {
-    public class UserService(ApplicationDbContext context) : IUserService
+    public class UserService(ApplicationDbContext context, IJwtProvider jwtProvider) : IUserService
     {
         private readonly ApplicationDbContext _context = context;
 
@@ -35,9 +35,26 @@ namespace FileStore.Server.Services
             return Result.Success();
         }
 
-        public Task<UserLoginResponse> LoginUserAsync(UserLoginRequest request)
+        public async Task<Result<UserLoginResponse>> LoginUserAsync(UserLoginRequest request)
         {
-            throw new NotImplementedException();
+            var user = await _context.Users
+                .AsNoTracking()
+                .FirstOrDefaultAsync(user => user.Name == request.Name);
+
+            if (user is null)
+            {
+                return Result<UserLoginResponse>.Failure(UserErrors.UserNotFound);
+            }
+
+            if (!BCrypt.Net.BCrypt.Verify(request.Password, user.PasswordHash))
+            {
+                return Result<UserLoginResponse>.Failure(UserErrors.WrongPassword);
+            }
+
+            var token = jwtProvider.CreateAccessToken(request.Name);
+
+            return Result<UserLoginResponse>.Success(
+                new UserLoginResponse(token));
         }
     }
 }
