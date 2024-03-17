@@ -18,13 +18,11 @@ namespace FileStore.Server.Controllers
             if (result.IsSuccess)
             {
                 return Created();
-            }
-            else
+            } 
+            
+            foreach (var error in result.Errors)
             {
-                foreach (var error in result.Errors)
-                {
-                    ModelState.AddModelError(error.Code, error.Message);
-                }
+                ModelState.AddModelError(error.Code, error.Message);
             }
 
             return ValidationProblem();
