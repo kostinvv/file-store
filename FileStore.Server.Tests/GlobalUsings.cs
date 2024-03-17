@@ -1,1 +1,12 @@
+global using System.Net;
+global using System.Net.Http.Json;
+global using Microsoft.Extensions.DependencyInjection;
+global using Microsoft.AspNetCore.Hosting;
+global using Microsoft.AspNetCore.TestHost;
+global using Microsoft.AspNetCore.Mvc.Testing;
+global using Microsoft.EntityFrameworkCore;
 global using Xunit;
+global using FluentAssertions;
+global using Testcontainers.PostgreSql;
+global using FileStore.Server.Data;
+global using FileStore.Server.DTOs.User;
