@@ -1,5 +1,6 @@
 ﻿using FileStore.Server.DTOs.User;
 using FileStore.Server.Services.Interfaces;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace FileStore.Server.Controllers
@@ -29,12 +30,27 @@ namespace FileStore.Server.Controllers
             return ValidationProblem();
         }
 
+        [AllowAnonymous]
         [HttpPost("sign-in")]
-        public IActionResult SignIn()
+        public async Task<ActionResult<UserLoginResponse>> SignInAsync(
+            [FromBody] UserLoginRequest request)
         {
-            return Ok();
+            var result = await userService.LoginUserAsync(request);
+
+            if (result.IsSuccess)
+            {
+                return Ok(result.Value);
+            }
+
+            foreach (var error in result.Errors)
+            {
+                ModelState.AddModelError(error.Code, error.Message);
+            }
+
+            return ValidationProblem();
         }
 
+        [Authorize]
         [HttpPost("logout")]
         public IActionResult LogOut()
         {
