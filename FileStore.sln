@@ -7,6 +7,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FileStore.Server", "FileSto
 EndProject
 Project("{54A90642-561A-4BB1-A94E-469ADEE60C69}") = "filestore.client", "filestore.client\filestore.client.esproj", "{47A3122C-02B0-4040-A730-252448F37B1D}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FileStore.Server.Tests", "FileStore.Server.Tests\FileStore.Server.Tests.csproj", "{D2CB913D-16D5-42F9-9AC6-959B00C3045E}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -23,6 +25,10 @@ Global
 		{47A3122C-02B0-4040-A730-252448F37B1D}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{47A3122C-02B0-4040-A730-252448F37B1D}.Release|Any CPU.Build.0 = Release|Any CPU
 		{47A3122C-02B0-4040-A730-252448F37B1D}.Release|Any CPU.Deploy.0 = Release|Any CPU
+		{D2CB913D-16D5-42F9-9AC6-959B00C3045E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D2CB913D-16D5-42F9-9AC6-959B00C3045E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D2CB913D-16D5-42F9-9AC6-959B00C3045E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D2CB913D-16D5-42F9-9AC6-959B00C3045E}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
