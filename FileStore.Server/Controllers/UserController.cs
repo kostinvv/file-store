@@ -1,6 +1,7 @@
 ﻿using FileStore.Server.DTOs.User;
 using FileStore.Server.Services.Interfaces;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
 
 namespace FileStore.Server.Controllers
@@ -14,10 +15,10 @@ namespace FileStore.Server.Controllers
             [FromBody] CreateUserRequest request)
         {
             var result = await userService.CreateUserAsync(request);
-
+            
             if (result.IsSuccess)
             {
-                return Created();
+                return Ok();
             } 
             
             foreach (var error in result.Errors)
