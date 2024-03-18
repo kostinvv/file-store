@@ -28,6 +28,16 @@ public static class AuthenticationConfiguration
                     IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(
                         jwtOptions.SecretKey)),
                 };
+
+                options.Events = new JwtBearerEvents()
+                {
+                    OnMessageReceived = context =>
+                    {
+                        context.Token = context.Request.Cookies["app-token"];
+                        
+                        return Task.CompletedTask;
+                    }
+                };
             });
     }
 }

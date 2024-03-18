@@ -3,57 +3,77 @@ using FileStore.Server.Services.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
-namespace FileStore.Server.Controllers
+namespace FileStore.Server.Controllers;
+
+[Route("api/v1/[controller]")]
+[ApiController]
+public class UserController(IUserService userService) : ControllerBase
 {
-    [Route("api/v1/[controller]")]
-    [ApiController]
-    public class UserController(IUserService userService) : ControllerBase
+    private const string TokenKey = "app-token";
+        
+    [AllowAnonymous]
+    [HttpPost]
+    public async Task<ActionResult<CreateUserResponse>> SignUpAsync(
+        [FromBody] CreateUserRequest request)
     {
-        [AllowAnonymous]
-        [HttpPost]
-        public async Task<ActionResult<CreateUserResponse>> SignUpAsync(
-            [FromBody] CreateUserRequest request)
-        {
-            var result = await userService.CreateUserAsync(request);
+        var result = await userService.CreateUserAsync(request);
             
-            if (result.IsSuccess)
-            {
-                return Ok(result.Value);
-            } 
+        if (result.IsSuccess)
+        {
+            Response.Cookies.Append(key: TokenKey, value: result.Value!.AccessToken);
             
-            foreach (var error in result.Errors)
-            {
-                ModelState.AddModelError(error.Code, error.Message);
-            }
-
-            return ValidationProblem();
-        }
-
-        [AllowAnonymous]
-        [HttpPost("sign-in")]
-        public async Task<ActionResult<UserLoginResponse>> SignInAsync(
-            [FromBody] UserLoginRequest request)
+            return Ok(result.Value);
+        } 
+            
+        foreach (var error in result.Errors)
         {
-            var result = await userService.LoginUserAsync(request);
-
-            if (result.IsSuccess)
-            {
-                return Ok(result.Value);
-            }
-
-            foreach (var error in result.Errors)
-            {
-                ModelState.AddModelError(error.Code, error.Message);
-            }
-
-            return ValidationProblem();
+            ModelState.AddModelError(error.Code, error.Message);
         }
 
-        [Authorize]
-        [HttpPost("logout")]
-        public IActionResult LogOut()
+        return ValidationProblem();
+    }
+
+    [AllowAnonymous]
+    [HttpPost("sign-in")]
+    public async Task<ActionResult<UserLoginResponse>> SignInAsync(
+        [FromBody] UserLoginRequest request)
+    {
+        var result = await userService.LoginUserAsync(request);
+
+        if (result.IsSuccess)
         {
-            return Ok();
+            Response.Cookies.Append(key: TokenKey, value: result.Value!.AccessToken);
+                
+            return Ok(result.Value);
         }
+
+        foreach (var error in result.Errors)
+        {
+            ModelState.AddModelError(error.Code, error.Message);
+        }
+
+        return ValidationProblem();
+    }
+
+    [Authorize]
+    [HttpGet]
+    public ActionResult<CurrentUserResponse> GetCurrentUser()
+    {
+        var username = User.FindFirst("Username")!.Value;
+        var response = new CurrentUserResponse(username);
+        
+        return Ok(response);
+    }
+
+    [Authorize]
+    [HttpPost("logout")]
+    public ActionResult LogOut()
+    {
+        if (Request.Cookies.ContainsKey(TokenKey))
+        {
+            Response.Cookies.Delete(TokenKey);   
+        }
+            
+        return Ok();
     }
 }
