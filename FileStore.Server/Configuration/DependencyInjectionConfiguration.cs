@@ -2,7 +2,6 @@ using System.Globalization;
 using FileStore.Server.DTOs.User;
 using FileStore.Server.Services;
 using FileStore.Server.Services.Interfaces;
-using FileStore.Server.Validators.User;
 using FluentValidation;
 using SharpGrip.FluentValidation.AutoValidation.Mvc.Extensions;
 
@@ -23,5 +22,6 @@ public static class DependencyInjectionConfiguration
             ValidatorOptions.Global.LanguageManager.Culture = new CultureInfo("en-US"));
         
         services.AddScoped<IValidator<CreateUserRequest>, CreateUserRequestValidator>();
+        services.AddScoped<IValidator<UserLoginRequest>, UserLoginRequestValidator>();
     }
 }
