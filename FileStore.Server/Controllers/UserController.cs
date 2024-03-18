@@ -1,24 +1,24 @@
 ﻿using FileStore.Server.DTOs.User;
 using FileStore.Server.Services.Interfaces;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
 
 namespace FileStore.Server.Controllers
 {
-    [Route("api/v1/user")]
+    [Route("api/v1/[controller]")]
     [ApiController]
     public class UserController(IUserService userService) : ControllerBase
     {
-        [HttpPost("sign-up")]
-        public async Task<ActionResult> SignUp(
+        [AllowAnonymous]
+        [HttpPost]
+        public async Task<ActionResult<CreateUserResponse>> SignUpAsync(
             [FromBody] CreateUserRequest request)
         {
             var result = await userService.CreateUserAsync(request);
             
             if (result.IsSuccess)
             {
-                return Ok();
+                return Ok(result.Value);
             } 
             
             foreach (var error in result.Errors)

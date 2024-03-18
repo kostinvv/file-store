@@ -10,34 +10,35 @@ namespace FileStore.Server.Services
 {
     public class UserService(ApplicationDbContext context, IJwtProvider jwtProvider) : IUserService
     {
-        private readonly ApplicationDbContext _context = context;
-
-        public async Task<Result> CreateUserAsync(CreateUserRequest request)
+        public async Task<Result<CreateUserResponse>> CreateUserAsync(CreateUserRequest request)
         {
-            var foundUser = await _context.Users
+            var foundUser = await context.Users
                 .AsNoTracking()
                 .FirstOrDefaultAsync(user => user.Name == request.Name);
-
+ 
             if (foundUser is not null)
             {
-                return Result.Failure(UserErrors.UserAlreadyExists);
+                return Result<CreateUserResponse>.Failure(UserErrors.UserAlreadyExists);
             }
 
             var passwordHash = BCrypt.Net.BCrypt.HashPassword(request.Password);
 
-            await _context.Users.AddAsync(new ApplicationUser { 
+            await context.Users.AddAsync(new ApplicationUser { 
                 Name = request.Name,
                 Email = request.Email, 
                 PasswordHash = passwordHash, 
             });
-            await _context.SaveChangesAsync();
+            await context.SaveChangesAsync();
 
-            return Result.Success();
+            var token = jwtProvider.CreateAccessToken(request.Name);
+            var response = new CreateUserResponse(request.Name, token);
+
+            return Result<CreateUserResponse>.Success(response);
         }
 
         public async Task<Result<UserLoginResponse>> LoginUserAsync(UserLoginRequest request)
         {
-            var user = await _context.Users
+            var user = await context.Users
                 .AsNoTracking()
                 .FirstOrDefaultAsync(user => user.Name == request.Name);
 
