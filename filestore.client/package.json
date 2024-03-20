@@ -10,10 +10,13 @@
     "lint": "eslint . --ext .vue,.js,.jsx,.cjs,.mjs --fix --ignore-path .gitignore"
   },
   "dependencies": {
+    "@vee-validate/yup": "^4.12.6",
     "axios": "^1.6.8",
     "pinia": "^2.1.7",
+    "vee-validate": "^4.12.6",
     "vue": "^3.4.21",
-    "vue-router": "^4.3.0"
+    "vue-router": "^4.3.0",
+    "yup": "^1.4.0"
   },
   "devDependencies": {
     "@vitejs/plugin-vue": "^5.0.4",
