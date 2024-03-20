@@ -23,6 +23,8 @@ app.UseHttpsRedirection();
 app.UseAuthentication();
 app.UseAuthorization();
 
+app.UseCors("FileStoreCorsPolicy");
+
 app.MapControllers();
 
 app.MapFallbackToFile("/index.html");
@@ -46,6 +48,17 @@ void RegisterServices(IServiceCollection services)
     services.AddEndpointsApiExplorer();
     
     services.AddProblemDetails();
+
+    services.AddCors(options =>
+    {
+        options.AddPolicy("FileStoreCorsPolicy", builder =>
+        {
+            builder
+                .WithOrigins("https://localhost:5173")
+                .AllowAnyMethod()
+                .AllowAnyHeader();
+        });
+    });
 
     services.AddAuthorization();
 }
