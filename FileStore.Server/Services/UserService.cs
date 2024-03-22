@@ -10,7 +10,7 @@ namespace FileStore.Server.Services
 {
     public class UserService(ApplicationDbContext context, IJwtProvider jwtProvider) : IUserService
     {
-        public async Task<Result<CreateUserResponse>> CreateUserAsync(CreateUserRequest request)
+        public async Task<Result<UserResponse>> CreateUserAsync(CreateUserRequest request)
         {
             var foundUser = await context.Users
                 .AsNoTracking()
@@ -18,7 +18,7 @@ namespace FileStore.Server.Services
  
             if (foundUser is not null)
             {
-                return Result<CreateUserResponse>.Failure(UserErrors.UserAlreadyExists);
+                return Result<UserResponse>.Failure(UserErrors.UserAlreadyExists);
             }
 
             var passwordHash = BCrypt.Net.BCrypt.HashPassword(request.Password);
@@ -31,12 +31,12 @@ namespace FileStore.Server.Services
             await context.SaveChangesAsync();
 
             var token = jwtProvider.CreateAccessToken(request.Name);
-            var response = new CreateUserResponse(request.Name, token);
+            var response = new UserResponse(token, request.Name);
 
-            return Result<CreateUserResponse>.Success(response);
+            return Result<UserResponse>.Success(response);
         }
 
-        public async Task<Result<UserLoginResponse>> LoginUserAsync(UserLoginRequest request)
+        public async Task<Result<UserResponse>> LoginUserAsync(UserLoginRequest request)
         {
             var user = await context.Users
                 .AsNoTracking()
@@ -44,18 +44,18 @@ namespace FileStore.Server.Services
 
             if (user is null)
             {
-                return Result<UserLoginResponse>.Failure(UserErrors.UserNotFound);
+                return Result<UserResponse>.Failure(UserErrors.UserNotFound);
             }
 
             if (!BCrypt.Net.BCrypt.Verify(request.Password, user.PasswordHash))
             {
-                return Result<UserLoginResponse>.Failure(UserErrors.WrongPassword);
+                return Result<UserResponse>.Failure(UserErrors.WrongPassword);
             }
 
             var token = jwtProvider.CreateAccessToken(request.Name);
 
-            return Result<UserLoginResponse>.Success(
-                new UserLoginResponse(token));
+            return Result<UserResponse>.Success(
+                new UserResponse(token, request.Name));
         }
     }
 }

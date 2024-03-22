@@ -13,7 +13,7 @@ public class UserController(IUserService userService) : ControllerBase
         
     [AllowAnonymous]
     [HttpPost]
-    public async Task<ActionResult<CreateUserResponse>> SignUpAsync(
+    public async Task<ActionResult<UserResponse>> SignUpAsync(
         [FromBody] CreateUserRequest request)
     {
         var result = await userService.CreateUserAsync(request);
@@ -35,7 +35,7 @@ public class UserController(IUserService userService) : ControllerBase
 
     [AllowAnonymous]
     [HttpPost("sign-in")]
-    public async Task<ActionResult<UserLoginResponse>> SignInAsync(
+    public async Task<ActionResult<UserResponse>> SignInAsync(
         [FromBody] UserLoginRequest request)
     {
         var result = await userService.LoginUserAsync(request);
