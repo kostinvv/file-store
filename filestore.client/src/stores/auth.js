@@ -1,54 +1,68 @@
 import { ref } from "vue";
 import { defineStore } from 'pinia';
-import axios from 'axios';
+
+import axiosApiInstance from "@/api.js";
 
 export const useAuthStore = defineStore('auth', () => {
-    const createUserResponse = ref({
+    const userInfo = ref({
         accessToken: '',
         username: '',
     })
-    const loginUserResponse = ref({
-        accessToken: '',
-    })
     const errors = ref([]);
-    
-    const signup = async (payload) => {
+    const isSuccess = ref(false);
+
+    const auth = async (url, payload) => {
         try {
-            let response = await axios.post(`http://localhost:5098/api/v1/user/`, {
+            let response = await axiosApiInstance.post(url, {
                 ...payload
             });
-            createUserResponse.value = {
+            
+            userInfo.value = {
                 accessToken: response.data.accessToken,
                 username: response.data.username,
-            }
-            
-            console.log(response.data)
+            };
+
+            localStorage.setItem('userInfo', JSON.stringify({
+                token: userInfo.value.accessToken,
+                username: userInfo.value.username,
+            }));
+
+            isSuccess.value = true;
         } catch (err) {
             errors.value = getErrorMessages(err);
-            throw errors.value;
         }
     }
+    
+    const signup = async (payload) => {
+        const url = 'user';
+        
+        await auth(url, payload);
+    }
     const signin = async (payload) => {
-        try {
-            let response = await axios.post(`http://localhost:5098/api/v1/user/sign-in`, {
-                ...payload
-            });
-            loginUserResponse.value = {
-                accessToken: response.data.accessToken,
-            }
-            
-            console.log(response.data);
-        } catch (err) {
-            errors.value = getErrorMessages(err)
-            throw errors.value;
+        const url = 'user/sign-in';
+
+        await auth(url, payload);
+    }
+    
+    const logout = () => {
+        userInfo.value = {
+            accessToken: '',
+            username: '',
         }
+    }
+    
+    const clearErrors = () => {
+        isSuccess.value = false;
+        errors.value = [];
     }
 
     return { 
         signup, 
         signin,
-        createUserResponse,
-        loginUserResponse,
+        logout,
+        clearErrors,
+        isSuccess,
+        userInfo,
         errors,
     }
 })
@@ -62,5 +76,6 @@ const getErrorMessages = (err) => {
             errorMessages.push(error);
         })
     }
+    
     return [...new Set(errorMessages)];
 }
