@@ -51,11 +51,11 @@ void RegisterServices(IServiceCollection services)
 
     services.AddCors(options =>
     {
-        options.AddPolicy("FileStoreCorsPolicy", builder =>
+        options.AddPolicy("FileStoreCorsPolicy", configurePolicy: policyBuilder =>
         {
-            builder
+            policyBuilder
                 .WithOrigins("https://localhost:5173")
-                .AllowAnyMethod()
+                .AllowAnyHeader()
                 .AllowAnyHeader();
         });
     });
