@@ -45,6 +45,8 @@ void RegisterServices(IServiceCollection services)
     
     services.AddValidators();
     
+    services.AddRepositories();
+    
     services.AddEndpointsApiExplorer();
     
     services.AddProblemDetails();
