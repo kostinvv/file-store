@@ -33,7 +33,7 @@ app.Run();
 
 void RegisterServices(IServiceCollection services)
 {
-    services.AddDatabase(configuration: builder!.Configuration);
+    services.AddDatabases(configuration: builder!.Configuration);
     
     services.AddSwaggerConfiguration();
     
