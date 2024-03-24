@@ -12,6 +12,10 @@ public static class DependencyInjectionConfiguration
     public static void AddApplicationServices(this IServiceCollection services)
     {
         services.AddScoped<IUserService, UserService>();
+
+        services.AddScoped<IFileService, FileService>();
+
+        services.AddScoped<IBucketService, BucketService>();
         
         services.AddScoped<IJwtProvider, JwtProvider>();
     }
