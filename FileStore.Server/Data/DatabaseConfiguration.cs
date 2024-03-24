@@ -1,3 +1,5 @@
+using FileStore.Server.Data.Repositories;
+using FileStore.Server.Interfaces;
 using Microsoft.EntityFrameworkCore;
 using Minio;
 
@@ -10,16 +12,21 @@ public static class DatabaseConfiguration
         IConfiguration configuration)
     {
         services.AddDbContext<ApplicationDbContext>(options =>
-            options.UseNpgsql(connectionString: 
+            options.UseNpgsql(connectionString:
                 configuration.GetConnectionString("DefaultConnection")));
 
-        services.AddMinio(configureClient: client =>
+        services.AddMinio(configureClient =>
         {
-            client.WithEndpoint(configuration["Minio:Endpoint"]);
-            client.WithCredentials(
-                configuration["Minio:AccessKey"], 
-                configuration["Minio:SecretKey"]);
-            client.WithSSL();
-        });
+            configureClient.WithEndpoint(configuration["Minio:Endpoint"]);
+            configureClient.WithCredentials(
+                    configuration["Minio:AccessKey"],
+                    configuration["Minio:SecretKey"])
+                .WithSSL(false);
+        });    
+    }
+    
+    public static void AddRepositories(this IServiceCollection services)
+    {
+        services.AddScoped<IStorageRepository, MinioRepository>();
     }
 }
