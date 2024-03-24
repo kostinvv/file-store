@@ -13,6 +13,19 @@ services:
       - "5437:5432"
     volumes:
       - postgres-data:/var/lib/postgresql/data
+  minio:
+    container_name: minio_db
+    image: quay.io/minio/minio
+    command: server /data --console-address ":9090"
+    ports:
+      - "9000:9000"
+      - "9090:9090"
+    volumes:
+      - minio-data:/data
+    environment:
+      MINIO_ROOT_USER: admin
+      MINIO_ROOT_PASSWORD: "Secure123!"
 
 volumes:
   postgres-data:
+  minio-data:
