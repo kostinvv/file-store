@@ -4,14 +4,10 @@ using System.Reflection;
 
 namespace FileStore.Server.Data
 {
-    public class ApplicationDbContext : DbContext 
+    public class ApplicationDbContext(DbContextOptions options) : DbContext(options)
     {
         public DbSet<ApplicationUser> Users => Set<ApplicationUser>();
-
-        public ApplicationDbContext(DbContextOptions options) : base(options) 
-        {
-
-        }
+        public DbSet<StorageObject> StorageObjects => Set<StorageObject>();
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {

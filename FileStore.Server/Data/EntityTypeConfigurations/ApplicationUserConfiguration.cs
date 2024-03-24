@@ -22,6 +22,11 @@ namespace FileStore.Server.Data.EntityTypeConfigurations
             builder.Property(user => user.Email)
                 .HasMaxLength(256)
                 .IsRequired();
+
+            builder.HasMany(user => user.StorageObjects)
+                .WithOne()
+                .HasForeignKey(store => store.UserId)
+                .IsRequired();
         }
     }
 }
